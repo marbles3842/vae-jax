@@ -47,7 +47,7 @@ git diff --cached
 ### Step 3 — Propose Commit Plan
 
 Before running the commit, generate a commit plan and present it to the user in the chat:
-- **Proposed Commit Message**: A simple, short, and meaningful commit message.
+- **Proposed Commit Message**: A simple, short, and meaningful commit message. **Crucial Rule**: The commit message must always start with a verb (e.g., "Fix", "Update", "Add", "Remove", "Refactor"). Do NOT include any prefixes like "feat:", "fix:", "ci:", etc.
 - **Files Staged**: A list of the files being committed.
 - **Summary**: A brief (1-2 sentence) summary of what changes are being introduced.
 
