@@ -1,0 +1,8 @@
+__pycache__/
+*.py[cod]
+
+.jax_cache/
+
+.vscode/
+
+pyrefly.toml
