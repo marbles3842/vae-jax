@@ -2,3 +2,4 @@ jax
 flax
 distrax
 optax
+pylint
