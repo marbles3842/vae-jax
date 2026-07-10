@@ -20,7 +20,7 @@ class DecoderNet(nnx.Module):
         x = nnx.relu(self.linear1(z))
         x = nnx.relu(self.linear2(x))
         x = self.linear3(x)                       # (batch, H*W)
-        return x
+        return x.reshape(x.shape[:-1] + self.output_shape)
 
 
 class BernoulliDecoder(nnx.Module):
@@ -49,5 +49,5 @@ class BernoulliDecoder(nnx.Module):
         logits = self.decoder_net(z)              # (batch, H, W)
         return distrax.Independent(
             distrax.Bernoulli(logits=logits),
-            reinterpreted_batch_ndims=1,          # sum over flattened D=784
+            reinterpreted_batch_ndims=len(self.decoder_net.output_shape),          # sum over spatial dimensions
         )

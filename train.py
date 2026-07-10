@@ -93,7 +93,6 @@ if __name__ == "__main__":
             print(f"epoch: {epoch}, loss: {loss.item():.4f}")
 
     samples = model.sample(n_samples=N_SAMPLES, rng=sample_key)
-    samples = samples.reshape(N_SAMPLES, IMG_H, IMG_W)
 
     save_samples(samples, N_SAMPLES, "samples.png")
 

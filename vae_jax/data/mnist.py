@@ -49,6 +49,6 @@ def get_mnist_dataset(
         drop_remainder=True,
         batch_size=train_batch_size,
         worker_count=0,
-        transformations=[_Normalize()],
+        transformations=[_Normalize(), _Reshape()],
     )
     return train_loader
