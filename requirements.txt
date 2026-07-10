@@ -2,4 +2,8 @@ jax
 flax
 distrax
 optax
+numpy
+matplotlib
+grain
+datasets
 pylint

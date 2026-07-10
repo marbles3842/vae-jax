@@ -1,8 +1,7 @@
-from tensorflow_probability.substrates import jax
 import jax
-import optax
 import jax.random as jr
 import matplotlib.pyplot as plt
+import optax
 
 from flax import nnx
 from flax.nnx import jit
@@ -10,7 +9,6 @@ from flax.nnx import jit
 from vae_jax import (
     VAE,
     GaussianPrior,
-    MixtureOfGaussians,
     EncoderNet,
     GaussianEncoder,
     BernoulliDecoder,
@@ -82,7 +80,7 @@ if __name__ == "__main__":
     num_steps_per_epoch = MNISTInfo.train_length // BATCH_SIZE
 
     optimizer = nnx.Optimizer(model, optax.adam(1e-3), wrt=nnx.Param)
-    
+
     for step, batch in enumerate(mnist_dataset):
         batch = jax.device_put(batch)
         key, rng_elbo = jr.split(key)

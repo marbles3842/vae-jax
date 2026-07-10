@@ -16,7 +16,6 @@ The implementation relies on the following key dependencies:
 *   **Flax (NNX)**: Neural network library for JAX (utilizing NNX's module system).
 *   **Distrax**: Probability distributions library for JAX.
 *   **Optax**: Gradient processing and optimization library.
-*   **TensorFlow Probability (substrates)**: Supporting library for probabilistic modeling.
 *   **Grain**: Library for fast data loading and preprocessing.
 *   **Hugging Face Datasets**: Used for fetching the raw MNIST dataset.
 *   **Matplotlib & NumPy**: For data manipulation and saving generated samples.
@@ -27,7 +26,6 @@ The implementation relies on the following key dependencies:
     ```bash
     pip install -r requirements.txt
     ```
-    *Note: You may also need to install other supporting packages such as `numpy`, `matplotlib`, `grain-python`, and `datasets` if not already present in your environment.*
 
 2.  **Train the model**:
     ```bash
