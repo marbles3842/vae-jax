@@ -1,0 +1,11 @@
+[MESSAGES CONTROL]
+disable=
+    missing-module-docstring,
+    missing-class-docstring,
+    missing-function-docstring,
+    too-few-public-methods,
+    invalid-name,
+    duplicate-code
+
+[FORMAT]
+max-line-length=120
