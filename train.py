@@ -7,8 +7,17 @@ import matplotlib.pyplot as plt
 from flax import nnx
 from flax.nnx import jit
 
-from vae import VAE, GaussianPrior, MixtureOfGaussians, EncoderNet, GaussianEncoder, BernoulliDecoder, DecoderNet
-from mnist_data_loader import get_mnist_dataset, MNISTInfo
+from vae_jax import (
+    VAE,
+    GaussianPrior,
+    MixtureOfGaussians,
+    EncoderNet,
+    GaussianEncoder,
+    BernoulliDecoder,
+    DecoderNet,
+    get_mnist_dataset,
+    MNISTInfo,
+)
 
 
 def init_model(rngs: nnx.Rngs, img_shape: tuple[int, int], latent_dim: int, hidden_dim: int):

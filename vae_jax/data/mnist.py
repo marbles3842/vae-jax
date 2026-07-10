@@ -52,4 +52,3 @@ def get_mnist_dataset(
         transformations=[_Normalize()],
     )
     return train_loader
-
