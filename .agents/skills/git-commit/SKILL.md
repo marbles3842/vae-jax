@@ -1,8 +1,7 @@
 ---
 name: git-commit
 description: >-
-  Commit currently staged changes only. Use when the user says "commit",
-  "commit my changes", "git commit", "save changes", or as the first step of
+  Commit currently staged changes only. Use when the user says "commit", "commit changes", "commit my changes", "git commit", "save changes", or as the first step of
   "commit and push". Verifies that changes are staged, checks for atomic cohesive edits,
   generates a simple, short, but meaningful commit message, and runs the commit script.
 ---
