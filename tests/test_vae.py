@@ -46,6 +46,9 @@ def test_vae_elbo(vae_model, vae_config):
     assert isinstance(elbo_val, jax.Array)
     assert elbo_val.shape == ()
 
+    # Strengthen assertion by checking the precise numerical ELBO value for the zero input
+    assert jnp.allclose(elbo_val, -565.2810668945312, atol=1e-3)
+
 
 def test_vae_loss(vae_model, vae_config):
     batch_size = vae_config["batch_size"]
@@ -54,12 +57,13 @@ def test_vae_loss(vae_model, vae_config):
     x = jnp.zeros((batch_size, *img_shape))
     rng_elbo = jr.PRNGKey(1)
 
-    elbo_val = vae_model.elbo(x, rng_elbo)
     loss_val = vae_model(x, rng_elbo)
 
     assert isinstance(loss_val, jax.Array)
     assert loss_val.shape == ()
-    assert jnp.allclose(loss_val, -elbo_val)
+
+    # Strengthen assertion by validating the expected negative ELBO value numerically
+    assert jnp.allclose(loss_val, 565.2810668945312, atol=1e-3)
 
 
 def test_vae_sample(vae_model, vae_config):
@@ -69,3 +73,6 @@ def test_vae_sample(vae_model, vae_config):
 
     samples = vae_model.sample(key, n_samples=n_samples)
     assert samples.shape == (n_samples, *img_shape)
+
+    # Strengthen assertion by checking that sampled outputs contain only binary Bernoulli values (0.0 or 1.0)
+    assert jnp.all((samples == 0.0) | (samples == 1.0))
