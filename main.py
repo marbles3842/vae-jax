@@ -47,7 +47,7 @@ def main():
                         help="File name to save model to or load model from (default: model.msgpack)")
     parser.add_argument('--samples', type=str, default='samples.png',
                         help="File name to save samples in (default: samples.png)")
-    parser.add_argument('--batch-size', type=int, default=128, metavar='N',
+    parser.add_argument('--batch-size', type=int, default=32, metavar='N',
                         help="Batch size for training (default: 128)")
     parser.add_argument('--epochs', type=int, default=2, metavar='N',
                         help="Number of epochs to train (default: 2)")
