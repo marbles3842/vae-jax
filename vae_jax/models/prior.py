@@ -1,6 +1,10 @@
+import jax
 import jax.numpy as jnp
+import jax.random as jr
 import distrax
 from flax import nnx
+
+_MOG_DEFAULT_NUM_COMPONENTS = 16
 
 
 class GaussianPrior(nnx.Module):
@@ -17,12 +21,24 @@ class GaussianPrior(nnx.Module):
         )
 
 
-# TODO: provide proper implementation
-
 class MixtureOfGaussians(nnx.Module):
 
-    def __init__(self, K: int, latent_dim: int):
+    def __init__(self, latent_dim: int, key: jax.Array, num_components: int = _MOG_DEFAULT_NUM_COMPONENTS):
         self.latent_dim = latent_dim
+        self.num_components = num_components
+
+        key_means, key_weights = jr.split(key, 2)
+
+        self.prior_means  = nnx.Param(jr.normal(key_means, shape=(num_components, latent_dim)))
+        self.prior_stds   = nnx.Param(jnp.ones((num_components, latent_dim)))
+        self.weights = nnx.Param(jr.normal(key_weights, shape=(num_components, )))
 
     def __call__(self) -> distrax.Distribution:
-        return GaussianPrior(self.latent_dim)
+
+        mixture_d = distrax.Categorical(probs = nnx.softmax(self.weights[...], axis=0))
+        component_d = distrax.Independent(distrax.Normal(loc=self.prior_means[...], scale=self.prior_stds[...]))
+
+        return distrax.MixtureSameFamily(
+            mixture_distribution = mixture_d,
+            components_distribution = component_d
+        )

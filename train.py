@@ -18,7 +18,7 @@ from vae_jax import (
 
 def init_model(rngs: nnx.Rngs, img_shape: tuple[int, int], latent_dim: int, hidden_dim: int, prior_type: str = "gauss"):
     if prior_type == "mog":
-        prior = MixtureOfGaussians(K=10, latent_dim=latent_dim)
+        prior = MixtureOfGaussians(latent_dim=latent_dim, key=rngs.params())
     else:
         prior = GaussianPrior(latent_dim)
     encoder_net = EncoderNet(img_shape[0] * img_shape[1], hidden_dim, latent_dim, rngs=rngs)
