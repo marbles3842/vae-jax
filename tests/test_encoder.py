@@ -11,18 +11,14 @@ def test_encoder_net():
     hidden_dim = 16
     latent_dim = 8
 
-    # Initialize RNGs
     rngs = nnx.Rngs(0)
 
-    # Initialize encoder net
     encoder_net = EncoderNet(input_dim, hidden_dim, latent_dim, rngs=rngs)
 
-    # Test with flat input
     x_flat = jnp.zeros((batch_size, input_dim))
     out_flat = encoder_net(x_flat)
     assert out_flat.shape == (batch_size, latent_dim * 2)
 
-    # Test with multi-dimensional input (should reshape to flat automatically)
     x_grid = jnp.zeros((batch_size, 28, 28))
     out_grid = encoder_net(x_grid)
     assert out_grid.shape == (batch_size, latent_dim * 2)
@@ -43,7 +39,6 @@ def test_gaussian_encoder():
 
     assert isinstance(dist, distrax.Distribution)
 
-    # Test sample and log_prob shapes
     key = jr.PRNGKey(0)
     samples = dist.sample(seed=key)
     assert samples.shape == (batch_size, latent_dim)

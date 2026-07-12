@@ -35,11 +35,9 @@ def test_bernoulli_decoder():
 
     assert isinstance(dist, distrax.Distribution)
 
-    # Test sample and log_prob shapes
     key = jr.PRNGKey(0)
     samples = dist.sample(seed=key)
     assert samples.shape == (batch_size, 28, 28)
 
-    # Sample targets for log_prob should be of the same shape
     log_prob = dist.log_prob(samples)
     assert log_prob.shape == (batch_size,)
