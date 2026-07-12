@@ -1,5 +1,7 @@
+import jax
 import jax.numpy as jnp
 import matplotlib.pyplot as plt
+from vae_jax import VAE
 
 
 def save_samples(samples: jax.Array, n_samples: int, filename: str = "samples.png"):
@@ -19,3 +21,8 @@ def save_samples(samples: jax.Array, n_samples: int, filename: str = "samples.pn
         grid = grid.at[y : y + h, x : x + w].set(samples[i])
 
     plt.imsave(filename, grid, cmap="gray")
+
+
+def sample(model: VAE, n_samples: int, key: jax.Array, filename: str):
+    samples = model.sample(n_samples=n_samples, rng=key)
+    save_samples(samples, n_samples, filename)
