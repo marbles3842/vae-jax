@@ -7,3 +7,4 @@ matplotlib
 grain
 datasets
 pylint
+tqdm

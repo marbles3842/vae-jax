@@ -12,3 +12,6 @@ pyrefly.toml
 *.png
 
 .agents/
+
+/models/
+/samples/
