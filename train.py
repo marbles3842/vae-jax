@@ -1,42 +1,32 @@
 import jax
 import jax.random as jr
-import matplotlib.pyplot as plt
-import optax
-
 from flax import nnx
 from flax.nnx import jit
+from tqdm import tqdm
 
 from vae_jax import (
     VAE,
     GaussianPrior,
+    MixtureOfGaussians,
     EncoderNet,
     GaussianEncoder,
     BernoulliDecoder,
     DecoderNet,
-    get_mnist_dataset,
     MNISTInfo,
 )
 
 
-def init_model(rngs: nnx.Rngs, img_shape: tuple[int, int], latent_dim: int, hidden_dim: int):
-    prior       = GaussianPrior(latent_dim)
-    # prior = MixtureOfGaussians(latent_dim, 6)
+def init_model(rngs: nnx.Rngs, img_shape: tuple[int, int], latent_dim: int, hidden_dim: int, prior_type: str = "gauss"):
+    if prior_type == "mog":
+        prior = MixtureOfGaussians(K=10, latent_dim=latent_dim)
+    else:
+        prior = GaussianPrior(latent_dim)
     encoder_net = EncoderNet(img_shape[0] * img_shape[1], hidden_dim, latent_dim, rngs=rngs)
     decoder_net = DecoderNet(latent_dim, hidden_dim, img_shape, rngs=rngs)
     encoder     = GaussianEncoder(encoder_net)
     decoder     = BernoulliDecoder(decoder_net)
     model       = VAE(prior, encoder, decoder)
     return model
-
-
-def save_samples(samples: jax.Array, n_samples: int, filename: str = "samples.png"):
-    fig, axes = plt.subplots(1, n_samples, figsize=(n_samples * 2, 2))
-    for i, ax in enumerate(axes):
-        ax.imshow(samples[i], cmap="gray")
-        ax.axis("off")
-    fig.tight_layout()
-    fig.savefig(filename, dpi=150)
-    plt.close(fig)
 
 
 @jit
@@ -49,49 +39,18 @@ def train_step(model: VAE, optimizer: nnx.Optimizer, rng_elbo: jax.Array, batch:
     return loss
 
 
+def train(model: VAE, optimizer: nnx.Optimizer, mnist_dataset, epochs: int, batch_size: int, key: jax.Array) -> jax.Array:
+    num_steps_per_epoch = MNISTInfo.train_length // batch_size
+    total_steps = num_steps_per_epoch * epochs
 
-if __name__ == "__main__":
-    # -- hyper-parameters --------------------------------------------------
-    BATCH_SIZE     = 128
-    IMG_H, IMG_W, N_CHANNELS   = 28, 28, 1
-    LATENT_DIM     = 10
-    HIDDEN_DIM     = 512
-    EPOCHS         = 5
-    N_SAMPLES      = 10
+    progress_bar = tqdm(enumerate(mnist_dataset), total=total_steps, desc="Training")
 
-    seed = 0
-    key  = jr.PRNGKey(seed)
-
-    # -- build model -------------------------------------------------------
-    rngs = nnx.Rngs(params=key)
-
-    model = init_model(rngs, (IMG_H, IMG_W), LATENT_DIM, HIDDEN_DIM)
-
-    print("Model built successfully.\n")
-
-    key, sample_key = jr.split(key)
-
-    mnist_dataset = get_mnist_dataset(train_batch_size=BATCH_SIZE, num_epochs=EPOCHS, seed=seed, train_worker_count=4)
-
-    print('Training started')
-
-    epoch = 0
-
-    num_steps_per_epoch = MNISTInfo.train_length // BATCH_SIZE
-
-    optimizer = nnx.Optimizer(model, optax.adam(1e-3), wrt=nnx.Param)
-
-    for step, batch in enumerate(mnist_dataset):
+    for step, batch in progress_bar:
         batch = jax.device_put(batch)
         key, rng_elbo = jr.split(key)
         loss = train_step(model, optimizer, rng_elbo, batch)
 
-        if (step + 1) % num_steps_per_epoch == 0:
-            epoch += 1
-            print(f"epoch: {epoch}, loss: {loss.item():.4f}")
+        epoch = step // num_steps_per_epoch + 1
+        progress_bar.set_postfix(loss=f"{loss.item():.4f}", epoch=f"{epoch}/{epochs}")
 
-    samples = model.sample(n_samples=N_SAMPLES, rng=sample_key)
-
-    save_samples(samples, N_SAMPLES, "samples.png")
-
-    print('Training completed')
+    return key
