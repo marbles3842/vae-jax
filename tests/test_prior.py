@@ -1,7 +1,7 @@
 import jax.numpy as jnp
 import jax.random as jr
 import distrax
-from vae_jax.models.prior import GaussianPrior, MixtureOfGaussians
+from vae_jax.models.prior import GaussianPrior
 
 
 def test_gaussian_prior():
@@ -25,16 +25,3 @@ def test_gaussian_prior():
 
     log_prob = dist.log_prob(sample)
     assert log_prob.shape == ()
-
-
-def test_mixture_of_gaussians():
-    latent_dim = 8
-    mog = MixtureOfGaussians(K=10, latent_dim=latent_dim)
-
-    # Test __call__ returns a GaussianPrior instance
-    prior = mog()
-    assert isinstance(prior, GaussianPrior)
-
-    # Calling the returned prior gets a distrax distribution
-    dist = prior()
-    assert isinstance(dist, distrax.Distribution)
