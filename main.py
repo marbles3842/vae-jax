@@ -1,6 +1,7 @@
+# Inspired by Jes Frellsen: course 02460 (Advanced Machine Learning Spring) DTU
+
 import os
 import argparse
-import jax
 import jax.random as jr
 import optax
 from flax import nnx
