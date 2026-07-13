@@ -43,3 +43,18 @@ To load the trained model parameters and generate digit samples:
 python main.py sample --model model.msgpack --samples samples.png --n-samples 64
 ```
 This loads parameters from `models/model.msgpack` and generates `samples/samples.png` containing the generated digits.
+
+## Supported Priors
+
+This repository supports three different latent prior distributions:
+1. **Standard Gaussian (`GaussianPrior`)**: A standard normal distribution ($\mathcal{N}(0, I)$) where the mean is fixed to 0 and variance is fixed to 1.
+2. **Mixture of Gaussians (MoG) (`MixtureOfGaussians`)**: A multimodal prior represented as a mixture of multiple diagonal-covariance Gaussian distributions, where the mixture weights, means, and standard deviations are learnable parameters.
+3. **VampPrior (`VampPrior`)**: A Variational Mixture of Posteriors prior, which utilizes learnable pseudo-inputs passed through the variational encoder to construct the mixture components. This aligns the prior distribution closely with the variational posterior.
+
+## References and Inspiration
+
+If you use or build upon this codebase, please cite:
+* **Book Citation:**
+  J. M. Tomczak. *Deep Generative Modeling*. Springer, 2024. URL: [https://link.springer.com/book/10.1007/978-3-031-64087-2](https://link.springer.com/book/10.1007/978-3-031-64087-2).
+* **Inspiration:**
+  This code implementation was inspired by Jes Frellsen's implementation for course 02460 (Advanced Machine Learning Spring) at the Technical University of Denmark (DTU).
