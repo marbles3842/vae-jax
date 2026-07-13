@@ -8,6 +8,7 @@ from vae_jax import (
     VAE,
     GaussianPrior,
     MixtureOfGaussians,
+    VampPrior,
     EncoderNet,
     GaussianEncoder,
     BernoulliDecoder,
@@ -17,13 +18,22 @@ from vae_jax import (
 
 
 def init_model(rngs: nnx.Rngs, img_shape: tuple[int, int], latent_dim: int, hidden_dim: int, prior_type: str = "gauss"):
+    encoder_net = EncoderNet(img_shape[0] * img_shape[1], hidden_dim, latent_dim, rngs=rngs)
+    encoder     = GaussianEncoder(encoder_net)
+
     if prior_type == "mog":
         prior = MixtureOfGaussians(latent_dim=latent_dim, key=rngs.params())
+    elif prior_type == "vamp":
+        prior = VampPrior(
+            latent_dim=latent_dim,
+            input_shape=img_shape[0] * img_shape[1],
+            key=rngs.params(),
+            encoder=encoder,
+        )
     else:
         prior = GaussianPrior(latent_dim)
-    encoder_net = EncoderNet(img_shape[0] * img_shape[1], hidden_dim, latent_dim, rngs=rngs)
+
     decoder_net = DecoderNet(latent_dim, hidden_dim, img_shape, rngs=rngs)
-    encoder     = GaussianEncoder(encoder_net)
     decoder     = BernoulliDecoder(decoder_net)
     model       = VAE(prior, encoder, decoder)
     return model

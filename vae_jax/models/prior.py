@@ -48,3 +48,26 @@ class MixtureOfGaussians(nnx.Module):
             mixture_distribution = mixture_d,
             components_distribution = component_d
         )
+
+class VampPrior(nnx.Module):
+    def __init__(self, latent_dim: int, input_shape: int, key: jax.Array, encoder: nnx.Module, num_components: int = _MOG_DEFAULT_NUM_COMPONENTS):
+        self.latent_dim = latent_dim
+        self.num_components = num_components
+
+        self.encoder = encoder
+
+        key_weights, key_inputs = jr.split(key, 2)
+        self.pseudoinputs = nnx.Param(jr.normal(key_inputs, shape=(num_components, input_shape)))
+        self.weights = nnx.Param(jr.normal(key_weights, shape=(num_components, )))
+
+
+
+    def __call__(self) -> distrax.Distribution:
+
+        component_d = self.encoder(self.pseudoinputs.value)
+        mixture_d = distrax.Categorical(probs = nnx.softmax(self.weights.value, axis=0))
+        
+        return distrax.MixtureSameFamily(
+            mixture_distribution = mixture_d,
+            components_distribution = component_d
+        )
