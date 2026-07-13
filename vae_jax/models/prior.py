@@ -31,14 +31,18 @@ class MixtureOfGaussians(nnx.Module):
         key_means, key_weights = jr.split(key, 2)
 
         self.prior_means  = nnx.Param(jr.normal(key_means, shape=(num_components, latent_dim)))
-        self.prior_stds   = nnx.Param(jnp.ones((num_components, latent_dim)))
+        self.raw_prior_stds = nnx.Param(jnp.zeros((num_components, latent_dim)))
         self.weights = nnx.Param(jr.normal(key_weights, shape=(num_components, )))
 
 
     def __call__(self) -> distrax.Distribution:
 
         mixture_d = distrax.Categorical(probs = nnx.softmax(self.weights.value, axis=0))
-        component_d = distrax.Independent(distrax.Normal(loc=self.prior_means.value, scale=self.prior_stds.value))
+        stds = jax.nn.softplus(self.raw_prior_stds.value) + 1e-6
+        component_d = distrax.Independent(
+            distrax.Normal(loc=self.prior_means.value, scale=stds),
+            reinterpreted_batch_ndims=1,
+        )
 
         return distrax.MixtureSameFamily(
             mixture_distribution = mixture_d,
