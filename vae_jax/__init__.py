@@ -2,6 +2,7 @@ from vae_jax.models import (
     VAE,
     GaussianPrior,
     MixtureOfGaussians,
+    VampPrior,
     EncoderNet,
     GaussianEncoder,
     DecoderNet,

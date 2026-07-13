@@ -55,7 +55,7 @@ def main():
                         help="Dimension of latent variable (default: 10)")
     parser.add_argument('--hidden-dim', type=int, default=512, metavar='N',
                         help="Hidden layer dimension (default: 512)")
-    parser.add_argument('--prior', type=str, default='gauss', choices=['gauss', 'mog'],
+    parser.add_argument('--prior', type=str, default='gauss', choices=['gauss', 'mog', 'vamp'],
                         help="Type of prior distribution (default: gauss)")
     parser.add_argument('--seed', type=int, default=0, metavar='S',
                         help="Random seed (default: 0)")
